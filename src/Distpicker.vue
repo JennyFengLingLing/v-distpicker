@@ -45,17 +45,19 @@
 
 <script>
 import DISTRICTS from './districts';
-
-const DEFAULT_CODE = 100000
-
+const DEFAULT_CODE = '100000'
 export default {
   name: 'v-distpicker',
   props: {
+    sortProvince:{ type: Function, default: null },
+    sortCity:{ type: Function, default: null },
+    sortArea:{ type: Function, default: null },
     province: { type: [String, Number], default: '' },
     city: { type: [String, Number], default: '' },
     area: { type: [String, Number], default: '' },
     type: { type: String, default: '' },
     hideArea: { type: Boolean, default: false },
+    quickPassCity: {type: Boolean, default: false},
     onlyProvince: { type: Boolean, default: false },
     staticPlaceholder: { type: Boolean, default: false },
     placeholders: {
@@ -163,6 +165,9 @@ export default {
         this.tab = 1
         this.showCityTab = false
       }
+      if(this.quickPassCity){
+        this.passCity()
+      }
     },
     getAreas() {
       this.currentArea = this.placeholders.area
@@ -184,6 +189,12 @@ export default {
       this.showCityTab = true
       this.showAreaTab = false
       this.getCities()
+    },
+    passCity() {
+      const codes = Object.keys(this.cities)
+      if (codes.length === 1) {
+        this.chooseCity(this.cities[codes[0]])
+      }
     },
     chooseProvince(name) {
       this.currentProvince = name
@@ -230,8 +241,30 @@ export default {
         }
       }
     },
+    sortDistricts(code) {
+      const districts = DISTRICTS[code]
+      const names = Object.keys(districts).map(x=>districts[x])
+      const {sortProvince, sortCity, sortArea} = this
+      if(districts == null) return null
+      //省排序
+      if(code === '100000') {
+        return !sortProvince ? districts : names.sort((nameX, nameY) => sortProvince(nameX, nameY))
+      }
+      //市排序
+      if(code.slice(-4) === '0000') {
+        const province = DISTRICTS[DEFAULT_CODE][code]
+        return !sortCity ? districts : names.sort((nameX, nameY) => sortCity(province, nameX, nameY))
+      }
+      //区排序
+      if(code.slice(-2) == '00' ) {
+        const codeOfProvince = code.slice(0,2)+ '0000' //省代号
+        const province = DISTRICTS[DEFAULT_CODE][codeOfProvince]
+        let city = DISTRICTS[codeOfProvince][code]
+        return !sortArea ? districts : names.sort((nameX, nameY) => sortArea(province, city, nameX, nameY))
+      }
+    },
     getDistricts(code = DEFAULT_CODE) {
-      return DISTRICTS[code] || null
+      return this.sortDistricts(code) 
     },
     determineValue(currentValue, placeholderValue, check = '') {
       if(currentValue == placeholderValue) {

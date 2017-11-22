@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <logo></logo>
-    <get-start></get-start>
+    <!-- <logo></logo>
+    <get-start></get-start> -->
     <usage></usage>
-    <attributes></attributes>
+    <!-- <attributes></attributes>
     <methods></methods>
-    <footbar></footbar>
+    <footbar></footbar> -->
   </div>
 </template>
 

@@ -71,6 +71,34 @@ Mobile:
 <v-distpicker type="mobile"></v-distpicker>
 ```
 
+QuickPassCity:
+
+```html
+<!-- 如果是直辖市，则快速跳过市的选择，直接进入区的选择 -->
+<v-distpicker quick-pass-city></v-distpicker>
+```
+
+Sort Province, City, Area:
+
+```html
+<v-distpicker :sort-province="provinceSort" :sort-city="citySort" :sort-area="areaSort"></v-distpicker>
+```
+```javascript
+export default {
+  methods: {
+    provinceSort(provinceX, provinceY) { 
+      //shoul return 1, 0 or -1
+    },
+    citySort(province, cityX, cityY) { 
+      //shoul return 1, 0 or -1
+    },
+    areaSort(province, city, areaX, areaY) { 
+      //shoul return 1, 0 or -1
+    },
+  },
+}
+```
+
 ## Contributors
 
 - [Jiajian Chan](http://github.com/jcc)
